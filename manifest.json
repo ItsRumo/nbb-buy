@@ -1,0 +1,39 @@
+{
+
+    "manifest_version": 2,
+    "name": "NB-Buy",
+    "version": "1.2",
+  
+    "description": "Allows buying off the clipboard on nbb.",
+
+    "browser_specific_settings": {
+      "gecko": {
+        "id": "nbbuy@rumo.dev"
+      }
+    },
+  
+    "icons": {
+      "128": "icons/nbbuy.png"
+    },
+
+    "permissions": [
+        "*://*.notebooksbilliger.de/*",
+        "clipboardRead",
+        "notifications"
+    ],
+
+    "browser_action": {
+      "default_icon": "icons/nbbuy.png"
+    },
+
+    "page_action": {
+      "show_matches": ["*://*.notebooksbilliger.de/*"],
+      "default_icon": "icons/nbbuy.png"
+    },
+
+    "background": {
+      "scripts": ["nbbuy.js"]
+    }
+  
+  }
+  
