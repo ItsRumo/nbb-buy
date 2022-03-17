@@ -21,11 +21,10 @@ function saveOptions(e) {
         days: days,
         from: from,
         to: to,
-        every: Number.parseInt(document.getElementById("every").value || 15),
+        every: Math.max(1, Number.parseInt(document.getElementById("every").value) || 11),
         check: document.getElementById("check").checked
     });
 
-    refreshLoop();
     e.preventDefault();
 }
 

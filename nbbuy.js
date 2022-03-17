@@ -71,4 +71,5 @@ function setIcon() {
 }
 
 setIcon();
-checkLoggedInLoop();
+checkLoggedIn();
+setInterval(checkLoggedIn, 60 * 1000);

@@ -1,4 +1,4 @@
-async function checkLoggedInLoop() {
+async function checkLoggedIn() {
     let stor = await browser.storage.sync.get(["check", "every", "to", "from", "days"]);
     let last = (await browser.storage.local.get("timeout")).timeout;
     let timestamp = 0;
@@ -7,13 +7,17 @@ async function checkLoggedInLoop() {
     }
     let d = new Date();
     let ds = d.getHours() * 60 + d.getMinutes();
+    let nts = d.getTime();
     const afterTo = stor.to.hour * 60 + stor.to.minute < ds,
             beforeFrom = stor.from.hour * 60 + stor.from.minute > ds,
-            tooSoon = d.getTime() - timestamp < stor.every * 60 * 1000,
+            tooSoon = nts - timestamp < stor.every * 60 * 1000 * 0.99,
             notToday = !stor.days.includes(d.getDay());
-    if (!stor.check || beforeFrom || afterTo || tooSoon || notToday) {
+    if (!stor.check || tooSoon || beforeFrom || afterTo || notToday) {
+        return;
     } else {
-        if (!(await loggedIn())) {
+        timestamp = nts;
+        let l = await loggedIn();
+        if (l == 1) {
             browser.notifications.create("nbbuy-login", {
                 type: "basic",
                 message: "You are currently not logged in.",
@@ -22,40 +26,25 @@ async function checkLoggedInLoop() {
             });
         }
     }
-    let delay = Math.max(stor.every * 60 * 1000 - (d.getTime() - timestamp), 0);
-    if (afterTo) {
-        delay = (stor.from.hour * 60 + stor.from.minute) + 24 * 60 - ds; 
-    }
-    let id = setTimeout(checkLoggedInLoop, 60 * 1000);
-    let nts = d.getTime();
-    browser.storage.local.set({
-        timeout: {
+    browser.storage.local.set({timeout: {
             timestamp: nts,
-            id: id
+            ran: new Date(nts).toString()
         }
     });
 }
 
 async function loggedIn() {
-    let ret = false;
+    let ret = 0;
     try {
-        await fetch("https://www.notebooksbilliger.de/kundenkonto", {
+        let res = await fetch("https://www.notebooksbilliger.de/kundenkonto", {
             credentials: "same-origin",
-            redirect: "error",
+            redirect: "follow",
             cache: "reload"
         });
-        ret = true;
+        ret = res.redirected ? 1 : 2;
     } catch (error) {
-        console.log(error);
+        // ret = 0;
     }
-    browser.storage.local.set({loggedIn: ret})
+    browser.storage.local.set({loggedIn: ret == 2});
     return ret;
-}
-
-async function refreshLoop() {
-    let last = (await browser.storage.local.get("timeout")).timeout;
-    if (last) {
-        clearTimeout(last.id);
-    }
-    checkLoggedInLoop();
 }

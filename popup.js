@@ -12,7 +12,6 @@ document.getElementById("login-check").addEventListener("change", e => {
     } else {
         browser.browserAction.setIcon({ "path": "/icons/nbnobuy.png"});
     }
-    refreshLoop();
 });
 
 document.addEventListener("DOMContentLoaded", async e => {
@@ -25,7 +24,7 @@ document.addEventListener("DOMContentLoaded", async e => {
         document.getElementById("status").innerText = "Logged In";
     }
 
-    let q = await loggedIn();
+    let q = (await loggedIn()) == 2;
     if (q != logged && q) {
         document.querySelector(".login-status").classList.add("logged-in");
         document.getElementById("status").innerText = "Logged In";
