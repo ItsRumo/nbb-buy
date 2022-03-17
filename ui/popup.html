@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <meta charset="utf-8"/>
+        <style>
+            html {
+                --blue-60: #0060df;
+                --green-60: #12bc00;
+                --red-60: #d70022;
+                font-family: sans-serif;
+                background: #ffa861;
+            }
+
+            body > * {
+                margin-block: 1em;
+            }
+
+            .login-status, .fancy-check label{
+                display: flex;
+                gap: 3em;
+                justify-content: space-between;
+            }
+
+            .login-status span {
+                color: var(--red-60);
+                width: 14ch;
+            }
+
+            .login-status.logged-in span {
+                color: var(--green-60);
+            }
+
+            .login-status.logged-in button {
+                visibility: hidden;
+            }
+
+            .fancy-check input {
+                display: none;
+            }
+
+            .fancy-check .pill{
+                height: 1em;
+                aspect-ratio: 2;
+                border: 0.125em solid lightgray;
+                border-radius: 100vw;
+                background: #8aafe0;
+                filter: saturate(0);
+                transition: filter 150ms cubic-bezier(.07, .95, 0, 1);
+            }
+
+            .fancy-check .nippel {
+                height: 100%;
+                aspect-ratio: 1;
+                background-color: var(--blue-60);
+                border-radius: 50%;
+                transition: transform 150ms cubic-bezier(0.07, .95, 0, 1);
+            }
+
+            input:checked ~ label .pill {
+                filter: saturate(1);
+            }
+
+            input:checked ~ label .nippel {
+                transform: translateX(100%);
+            }
+
+            .center {
+                display: grid;
+                grid-template-columns: 2fr 1fr 2fr;
+                place-items: center;
+            }
+
+            .center button {
+                padding: 0.5em;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="login-status">
+            <span id="status">Not Logged In</span>
+            <button>Login now</button>
+        </div>
+        <div class="fancy-check">
+            <input id="login-check" type="checkbox">
+            <label for="login-check">Login check
+                <div class="pill"><div class="nippel"></div></div>
+            </label>
+        </div>
+        <hr/>
+        <div class="center">
+            <button id="add-2-cart">Add to cart</button>
+            <span id="continue">❌</span>
+            <button id="checkout">Checkout</button>
+        </div>
+        <script src="/buyhelp.js"></script>
+        <script src="/login.js"></script>
+        <script src="/popup.js"></script>
+    </body>
+</html>

@@ -1,7 +1,41 @@
-const nbb_regex = /\bhttps?:\/\/(?:www\.)notebooksbilliger\.de\/[^\/]*\+(\d+)\b/;
+async function initStorage() {
+    let stor = await browser.storage.sync.get(["check", "every", "to", "from", "days"]);
+    if (!stor.check) {
+        stor.check = false;
+    }
+    if (!stor.every) {
+        stor.every = 11;
+    }
+    if (!stor.days) {
+        stor.days = [1,2,3,4,5];
+    }
+    if (!stor.from) {
+        stor.from = {hour: 8, minute: 0};
+    } else {
+        if (!stor.from.hour) {
+            stor.from.hour = 8;
+        }
+        if (!stor.from.minute) {
+            stor.from.minute = 0;
+        }
+    }
+    if (!stor.to) {
+        stor.to = {hour: 18, minute: 0};
+    } else {
+        if (!stor.to.hour) {
+            stor.to.hour = 18;
+        }
+        if (!stor.to.minute) {
+            stor.to.minute = 0;
+        }
+    }
+
+    browser.storage.sync.set(stor);
+}
+
+initStorage()
 
 browser.browserAction.onClicked.addListener(globalGo);
-browser.pageAction.onClicked.addListener(handleClick);
 browser.notifications.onClicked.addListener(() => {
     browser.tabs.create({
         url: "https://www.notebooksbilliger.de/kundenkonto/anmelden",
@@ -10,59 +44,31 @@ browser.notifications.onClicked.addListener(() => {
 
 async function globalGo(tab, clickData) {
     if (clickData.button == 1) {
-        createKasseTab();
-    } else {
-        handleClick(tab);
+        if (globalGo.stage % 2 == 0) {
+            handleClick(null);
+        } else {
+            createKasseTab();
+        }
+        globalGo.stage = (globalGo.stage + 1) % 2
     }
+    //  else {
+    //     handleClick(tab);
+    // }
 }
 
-async function handleClick(tab, callback=null) {
-    const raw_cb = await navigator.clipboard.readText();
-    const match = nbb_regex.exec(tab.url) || nbb_regex.exec(raw_cb);
-    if (!match) {
-        return false;
-    }
-    const [url, pid] = match;
-    console.log(url, pid);
-    let req = new XMLHttpRequest();
-    req.open("POST", `${url}/action/add_product`, true);
-    if (callback) {
-        req.onreadystatechange = function() {
-            if (this.readyState === XMLHttpRequest.HEADERS_RECEIVED && this.status === 200) {
-                callback();
-            }
-        };
-    }
-    req.send(null);
-    return true;
+globalGo.stage = 0;
+
+function setIcon() {
+    let obj = browser.storage.sync.get("check");
+    obj.then(res => {
+        if (res.check) {
+            browser.browserAction.setIcon({ "path": "/icons/nbbuy.png"});
+        } else {
+            browser.browserAction.setIcon({ "path": "/icons/nbnobuy.png"});
+        }
+    });
+
 }
 
-async function createKasseTab() {
-    browser.tabs.create({url: "https://www.notebooksbilliger.de/kasse"}).then(
-        kasse => {
-            browser.tabs.executeScript(kasse.id, {
-                file: "semiautocheckout.js",
-                runAt: "document_end"
-            });
-        });
-}
-
-async function checkLoggedIn() {
-    try {
-        await fetch("https://www.notebooksbilliger.de/kundenkonto", {
-            credentials: "same-origin",
-            redirect: "error",
-            cache: "reload"
-        });
-    } catch (error) {
-        browser.notifications.create("nbbuy-login", {
-            type: "basic",
-            message: "You are currently not logged in.",
-            title: "Create user session!",
-            iconUrl: browser.runtime.getURL("icons/nbbuy.png")
-        });
-    }
-}
-
-checkLoggedIn();
-let loginchecker = setInterval(checkLoggedIn, 11 * 60 * 1000);
+setIcon();
+checkLoggedInLoop();

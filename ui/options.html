@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <meta charset="utf-8"/>
+        <style>
+            form > * {
+                margin-block: 1em;
+            }
+        </style>
+    </head>
+
+    <body>
+        <form>
+            <div>
+                <input id="check" type="checkbox">
+                <label for="check">Check if logged in</label>
+            </div>
+            <fieldset id="days">
+                <legend>Active Days</legend>
+                <input id="mon" type="checkbox"/>
+                <label for="mon">Monday</label>
+                <input id="tue" type="checkbox"/>
+                <label for="tue">Tuesday</label>
+                <input id="wed" type="checkbox"/>
+                <label for="wed">Wednesday</label>
+                <input id="thu" type="checkbox"/>
+                <label for="thu">Thursday</label>
+                <input id="fri" type="checkbox"/>
+                <label for="fri">Friday</label>
+                <input id="sat" type="checkbox"/>
+                <label for="sat">Saturday</label>
+                <input id="sun" type="checkbox"/>
+                <label for="sun">Sunday</label>
+            </fieldset>
+            <fieldset id="times">
+                <legend>Active times</legend>
+                <label for="from">From</label>
+                <input id="from" type="time"/>
+                <label for="to">To</label>
+                <input id="to" type="time"/>
+                <label for="every">Every</label>
+                <input id="every" type="number" min="1" max="180" style="max-width: 8ch;"/>
+                <span>minutes</span>
+            </fieldset>
+        </form>
+        <script src="/login.js"></script>
+        <script src="/options.js"></script>
+    </body>
+</html>
