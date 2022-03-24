@@ -1,6 +1,7 @@
 async function checkLoggedIn() {
     let stor = await browser.storage.sync.get(["check", "every", "to", "from", "days"]);
-    let last = (await browser.storage.local.get("timeout")).timeout;
+    let lstor = await browser.storage.local.get(["timeout", "check"])
+    let last = lstor.timeout;
     let timestamp = 0;
     if (last) {
         timestamp = last.timestamp;
@@ -12,7 +13,7 @@ async function checkLoggedIn() {
             beforeFrom = stor.from.hour * 60 + stor.from.minute > ds,
             tooSoon = nts - timestamp < stor.every * 60 * 1000 * 0.99,
             notToday = !stor.days.includes(d.getDay());
-    if (!stor.check || tooSoon || beforeFrom || afterTo || notToday) {
+    if (!lstor.check || tooSoon || beforeFrom || afterTo || notToday) {
         return;
     } else {
         timestamp = nts;

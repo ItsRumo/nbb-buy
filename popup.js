@@ -6,7 +6,7 @@ document.querySelector(".login-status button").addEventListener("click", () => {
 });
 
 document.getElementById("login-check").addEventListener("change", e => {
-    browser.storage.sync.set({"check": e.target.checked});
+    browser.storage.local.set({"check": e.target.checked});
     if (e.target.checked) {
         browser.browserAction.setIcon({ "path": "/icons/nbbuy.png"});
     } else {
@@ -15,7 +15,7 @@ document.getElementById("login-check").addEventListener("change", e => {
 });
 
 document.addEventListener("DOMContentLoaded", async e => {
-    let res = await browser.storage.sync.get("check");
+    let res = await browser.storage.local.get("check");
     document.getElementById("login-check").checked = res.check || false;
     let lres = await browser.storage.local.get("loggedIn");
     let logged = lres.loggedIn || false;

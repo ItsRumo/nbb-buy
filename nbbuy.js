@@ -1,7 +1,8 @@
 async function initStorage() {
-    let stor = await browser.storage.sync.get(["check", "every", "to", "from", "days"]);
-    if (!stor.check) {
-        stor.check = false;
+    let stor = await browser.storage.sync.get(["every", "to", "from", "days"]);
+    let lstor = await browser.storage.local.get("check");
+    if (!lstor.check) {
+        lstor.check = false;
     }
     if (!stor.every) {
         stor.every = 11;
@@ -31,6 +32,7 @@ async function initStorage() {
     }
 
     browser.storage.sync.set(stor);
+    browser.storage.local.set(lstor);
 }
 
 initStorage()
@@ -59,7 +61,7 @@ async function globalGo(tab, clickData) {
 globalGo.stage = 0;
 
 function setIcon() {
-    let obj = browser.storage.sync.get("check");
+    let obj = browser.storage.local.get("check");
     obj.then(res => {
         if (res.check) {
             browser.browserAction.setIcon({ "path": "/icons/nbbuy.png"});

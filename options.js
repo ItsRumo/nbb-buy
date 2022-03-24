@@ -21,7 +21,9 @@ function saveOptions(e) {
         days: days,
         from: from,
         to: to,
-        every: Math.max(1, Number.parseInt(document.getElementById("every").value) || 11),
+        every: Math.max(1, Number.parseInt(document.getElementById("every").value) || 11)
+    });
+    browser.storage.local.set({
         check: document.getElementById("check").checked
     });
 
@@ -40,6 +42,9 @@ function restoreOptions(e) {
         document.getElementById("from").value = res.from ? obj2TString(res.from) : "08:00";
         document.getElementById("to").value = res.to ? obj2TString(res.to) : "18:00";
         document.getElementById("every").value = res.every || 11;
+        document.getElementById("check").checked = res.check;
+    });
+    browser.storage.local.get().then(res => {
         document.getElementById("check").checked = res.check;
     });
 }
